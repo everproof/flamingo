@@ -1,0 +1,44 @@
+{% extends 'flamingo/base.html' %}
+
+{% block content %}
+  {% if curriculums %}
+    <h5>
+      {{ curriculums.count }} <u>curriculums</u> found  matching your query:
+    </h5>
+    <div class="table-responsive">
+      <table class="table table-hover table-striped" id="search-table">
+        <thead>
+          <tr>
+            <th>Course</th>
+            <th>Provider</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for curriculum in curriculums %}
+            <tr class="clickable-row" data-href="{% url 'flamingo:curriculums-details' curriculum.id%}">
+              <td>{{curriculum.course}}</td>
+              <td>{{curriculum.provider}}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p> No courses were found matching this search</p>
+  {% endif %}
+
+  <a class="btn btn-outline-primary" href="{% url 'flamingo:curriculums-search' %}" role="button" aria-disabled="true"> Back </a>
+  <a class="btn btn-outline-success" href="{% url 'flamingo:curriculums-add' %}" role="button" aria-disabled="true"> Add Curriculum </a>
+  <script>
+
+  /*
+   * Makes the rows in the table clickable.
+   */
+  jQuery(document).ready(function($) {
+      $(".clickable-row").click(function() {
+          window.location = $(this).data("href");
+      });
+  });
+  </script>
+
+{% endblock %}

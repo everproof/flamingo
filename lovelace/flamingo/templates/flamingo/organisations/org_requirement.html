@@ -1,0 +1,39 @@
+{% extends 'flamingo/base.html' %}
+
+{% block content %}
+{% include 'flamingo/organisations/org_nav.html' %}
+  <div class="card">
+    <div class="card-body">
+      <h3> Requirement: {{ requirement.name }} </h3>
+      <h3> Roles: {{ requirement.roles.all|join:", " }}</h3>
+      <h3> Documents: {{ requirement.courses.all|join:", " }}</h3>
+      <a class="btn btn-outline-primary" href="{% url 'flamingo:org-requirements' organisation.id %}"> Back </a>
+      <a class="btn btn-outline-warning" href="{% url 'flamingo:org-requirement-edit' organisation.id requirement.id %}"> Edit</a>
+      <button type="button" id="delete" class="btn btn-outline-danger" data-toggle="modal" data-target="#confirmDeleteModal">Delete</button>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmDeleteModalLabel">Confirm Deleting Requirement</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to delete this requirement?
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline-danger" type="button" data-dismiss="modal">Close</button>
+          <form id="deleteForm" method="POST" action="{% url 'flamingo:org-requirement-delete' organisation.id requirement.id %}">
+            {% csrf_token %}
+            <button id="confirmDeleteModalSubmit" class="btn btn-outline-success" type="submit" name="delete">Delete</a>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

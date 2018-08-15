@@ -1,0 +1,38 @@
+{% extends 'flamingo/base.html' %}
+
+{% block content %}
+<div class="card">
+  <div class="card-body">
+    <h3 class="text-primary"> <u> View Curriculum: </u> </h3>
+    <h4>
+      The course <u>{{ curriculum.course }}</u> is provided by <u>{{ curriculum.provider }}</u>
+    </h4>
+
+    <p>
+      This curriculum is associated with <b>{{users|length}}</b> user(s)
+    </p>
+
+    <div id="associated-users" style="display:none;">
+      <b> Associated Users: </b>
+      <ul>
+        {% for user in users %}
+          <li> {{ user.first_name}} {{ user.last_name}} ({{ user.email}}) </li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <p>
+      <a href="{% url 'flamingo:curriculums-list' %}"class="btn btn-outline-primary"> Back </a>
+      <a class="btn btn-outline-info" id="hideshow" role="button"> Show/Hide Associated Users </a>
+    </p>
+  </div>
+</div>
+
+<script>
+jQuery(document).ready(function(){
+        jQuery('#hideshow').on('click', function(event) {
+             jQuery('#associated-users').toggle('show');
+        });
+    });
+</script>
+{% endblock %}

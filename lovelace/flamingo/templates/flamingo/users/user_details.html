@@ -1,0 +1,45 @@
+{% extends 'flamingo/base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+
+<h2> PERSON DETAILS
+  <a class="btn btn-outline-warning float-right" href="{% url 'flamingo:user-details-edit' user.id %}">EDIT DETAILS</a>
+</h2>
+<p> First name: <b>{{ user.first_name }}</b>
+<a class="btn btn-outline-dark float-right" href="#">GHOST</a> </p>
+<p> Middle name: <b>{{ user.last_name }}</b> </p>
+<p> Last name: <b>{{ user.last_name }}</b>  </p>
+<p> Email: <b>{{ user.email }}</b> </p>
+<p> DOB: <b>{{ user.date_of_birth }}</b> </p>
+<p> Phone: <b>{{ user.phone }}</b> </p>
+<p> Date Last Login Email sent:<b></b> - </p>
+<p> Date Signed Up:<b></b> - </p>
+<p> Date Last Logged In:<b> {{ user.last_login }}</b> </p>
+
+{% if user.qualifications.count > 0 %}
+  <a class="btn btn-primary" href="{% url 'flamingo:user-documents' user.id %}">VIEW DOCUMENTS ({{user.qualifications.count}})</a>
+{% else %}
+  <a href="#" class="btn btn-secondary disabled" role="button" aria-disabled="true">NO DOCUMENTS FOUND (0)</a>
+{% endif %}
+
+<p> </p>
+
+  <h2> LINKED ORGANISATION DETAILS </h2>
+  {% for membership in user.memberships.all %}
+  <div class="card">
+    <p> Name:  <b>{{ membership.organisation.name }} </b>
+      <a class="btn btn-outline-primary float-right" href="{% url 'flamingo:org-member' pk=membership.organisation.id member_pk=membership.id %}">VIEW</a>
+    </p>
+    <p> Roles: <b>{{ membership.roles.all|join:", " }}</b> </p>
+    <p> Access:
+      {% if membership.level == "ADMIN" %}
+        <b>Administrator</b> <img src=" {% static 'img/flamingo.png' %}" />
+      {% elif membership.level == "" %}
+        <b>Person</b>
+      {% endif %}
+    </p>
+  </div>
+{% endfor %}
+
+{% endblock %}

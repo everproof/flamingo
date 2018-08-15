@@ -1,0 +1,12 @@
+{% extends 'flamingo/base.html' %}
+
+{% block content %}
+
+  <div id="searchTerm" class="text-center">
+    <h2> Search for a Curriculum: </h2>
+    <form id="course_search" action="{% url 'flamingo:curriculums-list' %}" method="get" accept-charset="utf-8">
+      <input id="searchBox" name="search" type="text" placeholder="Type a Course or Provider name...">
+      <button class="btn btn-outline-primary" type="submit">Search</button>
+    </form>
+  </div>
+{% endblock %}

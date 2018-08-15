@@ -1,0 +1,71 @@
+{% extends 'flamingo/base.html' %}
+
+{% block content %}
+  {% if users %}
+    <h5>
+      {{ paginator.count }} user(s) found:
+    </h5>
+    <div class="table-responsive">
+      <table class="table table-hover table-striped" id="search-table">
+        <thead>
+          <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in users %}
+            <tr class="clickable-row" data-href="{% url 'flamingo:user-details' user.id %}">
+              <td>{{ user.first_name }}</td>
+              <td>{{ user.last_name }}</td>
+              <td>{{ user.email }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% if is_paginated %}
+    <nav>
+      <ul class="pagination">
+        {% if page_obj.has_previous %}
+          <li class="page-item"> <a class="page-link" href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+        {% else %}
+          <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+        {% endif %}
+        {% for i in paginator.page_range %}
+          {% if page_obj.number == i %}
+            <li class="page-item active"><span class="page-link">{{ i }} <span class="sr-only">(current)</span></span></li>
+          {% else %}
+            <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+          {% endif %}
+        {% endfor %}
+        {% if page_obj.has_next %}
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+        {% else %}
+          <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+        {% endif %}
+      </ul>
+    </nav>
+    {% endif %}
+  {% else %}
+    <p> No users were found matching this search</p>
+  {% endif %}
+
+
+
+  <a class="btn btn-outline-primary" href="{% url 'flamingo:user-search' %}" role="button" aria-disabled="true"> Back </a>
+  <script>
+
+  /*
+   * Makes the rows in the table clickable.
+   */
+  jQuery(document).ready(function($) {
+      $(".clickable-row").click(function() {
+          window.location = $(this).data("href");
+      });
+  });
+  </script>
+
+{% endblock %}

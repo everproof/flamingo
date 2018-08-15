@@ -1,0 +1,23 @@
+{% extends 'flamingo/base.html' %}
+
+{% block content %}
+{% include 'flamingo/organisations/org_nav.html' %}
+<div class="card">
+  <div class="card-body">
+    <form action="{% url 'flamingo:org-role-add' organisation.id %}" method="POST">
+        {% csrf_token %}
+        <p> <b> Name: {{ role_form.name }} </b> </p>
+        <p> <b> Requirements: </b> {{ req_form.requirements }}</p>
+        <a href="{% url 'flamingo:org-roles' organisation.id %}"class="btn btn-outline-danger"> Cancel </a>
+        <input class="btn btn-outline-success" type="submit" value="Save" />
+    </form>
+  </div>
+</div>
+
+<script>
+$('#selectRequirements').multiSelect({
+  selectableHeader: "<div class='custom-header'>Existing Requirements</div>",
+  selectionHeader: "<div class='custom-header'>Selected Requirements</div>",
+})
+</script>
+{% endblock %}

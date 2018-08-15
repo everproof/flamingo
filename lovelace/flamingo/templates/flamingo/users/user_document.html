@@ -1,0 +1,37 @@
+{% for qualification in user.qualifications.all %}
+  <div class="card">
+    <div class="card-header" id="heading{{qualification.id}}">
+        <button class="btn btn-link" data-toggle="collapse" data-target="#collapse{{qualification.id}}" aria-expanded="false" aria-controls="collapse{{qualification.id}}">
+          {{ qualification.course.title }}
+          {% if qualification.verification_status == 'VERIFIED' %}
+            <span class="badge-pill badge-success">Verified</span>
+          {% elif qualification.verification_status == 'EXPIRED' %}
+            <span class="badge-pill badge-danger">Expired</span>
+          {% elif qualification.verification_status == 'REVOKED' %}
+            <span class="badge-pill badge-danger">Revoked</span>
+          {% endif %}
+        </button>
+    </div>
+
+    <div id="collapse{{qualification.id}}" class="collapse hide" aria-labelledby="heading{{qualification.id}}" data-parent="#accordion">
+      <div class="card-body">
+        <p> Verification Status: <b> {{ qualification.verification_status }} </b> </p>
+        <p> Date Attained: <b> {{ qualification.attained_date }} </b> </p>
+        <p> Expiry Date:
+          <b> {{ qualification.expiry_date }}</b>
+          ({{ qualification.expiry_date|timeuntil:time }})
+        </p>
+        <p> Doc Number: <b> {{ qualification.document_number }} </b> </p>
+        <p> Visbility: <b> {{ qualification.organisations.all|join:", " }}</b> </p>
+        <p> Supporting Doc:
+          {% if qualification.attached_files %}
+           {{ qualification.attached_files }}
+          {% endif %}
+        </p>
+        <p> Notes: <b> {{ qualification.notes }} </b> </p>
+        <a class="btn btn-outline-warning" href="
+        {% url 'flamingo:user-documents-edit' user.id qualification.id %}">Edit {{ qualification.course.title}}</a>
+      </div>
+    </div>
+  </div>
+{% endfor %}

@@ -1,0 +1,27 @@
+body {
+    padding-top: 65px;
+    margin-top: 5vh;
+}
+
+#searchTerm{
+  margin-top: 20vh;
+}
+
+#searchBox {
+  width: 70%;
+  font-size: 40px;
+}
+
+.bg-flamingo {
+    background-color: #fc8eac;
+}
+
+.clickable-row{
+  cursor: pointer;
+}
+
+.custom-header{
+  background: black;
+  color: white;
+  text-align: center;
+}

@@ -1,0 +1,122 @@
+{% extends 'flamingo/base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+{% include 'flamingo/organisations/org_nav.html' %}
+  <div class="tab-content" id="orgTabContent">
+    <div class="tab-pane fade show active">
+      <div class="card">
+        <div class="card-body">
+          <div class="float-left">
+            There are a total of <b> {{ members.count }} members </b> within the <b> {{ organisation.name }}</b>
+          </div>
+          <div class="float-right">
+            <a class="btn btn-outline-info" href="{% url 'flamingo:org-users-search' organisation.id %}" role="button">Link New Member</a>
+          </div>
+        </div>
+        <div class="card">
+          {% if members %}
+            <table class="table table-striped" id="members-table">
+              <thead>
+                <tr>
+                  <th scope="col">Admin</th>
+                  <th scope="col">Fname</th>
+                  <th scope="col">Lname</th>
+                  <th scope="col">Email</th>
+                  <th scope="col">Roles</th>
+                  <th scope="col">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+              {% for member in members %}
+                <tr>
+                  <td> {% if member.level == "ADMIN" %}
+                      <img src=" {% static 'img/flamingo.png' %}" />
+                     {% endif %}
+                  </td>
+                  <td>{{ member.user.first_name }}</td>
+                  <td>{{ member.user.last_name }}
+                  </td>
+                  <td>{{ member.user.email }}</td>
+                  <td>{{ member.roles.all|join:", " }}</td>
+                  <td>
+                    <div class="btn-group" role="group">
+                      <a class="btn btn-outline-primary" href="{% url 'flamingo:org-member' organisation.id member.id %}" role="button">View</a>
+                      <a class="btn btn-outline-warning" href="{% url 'flamingo:org-member-edit' organisation.id member.id %}" role="button">Edit</a>
+                      <button type="button" id="unlink" class="btn btn-outline-danger" data-toggle="modal" data-target="#confirmUnlinkModal" data-action="{% url 'flamingo:org-member-unlink' organisation.id member.id %}">Unlink</button>
+                    </div>
+                  </td>
+                </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          {% endif %}
+
+          <p> Note: <img src=" {% static 'img/flamingo.png' %}" /> = Admin </p>
+
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <a id="back-button" class="btn btn-outline-primary"role="button" aria-disabled="true" href="#"> Return to search results </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="confirmUnlinkModal" tabindex="-1" role="dialog" aria-labelledby="confirmUnlinkModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmLinkModalLabel">Confirm Unlinking User</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to unlink this member from "{{ organisation.name }}"?
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline-danger" type="button" data-dismiss="modal">Close</button>
+        <form id="unlinkForm" method="POST">
+          {% csrf_token %}
+          <button id="confirmUnlinkModalSubmit" class="btn btn-outline-success" type="submit" name="unlink">Unlink</a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  /**
+   * Creates the href to go back to most recent searched list.
+   * Appends the href to the back button.
+   */
+  window.onload = function() {
+      document.getElementById("back-button").href = "{% url 'flamingo:org-list' %}" +  "?org=" + localStorage.getItem("orgSearchTerm");
+  };
+
+  /**
+   * Using the DataTable JS plugin to add filtering, searching and pagination
+   */
+  $(document).ready(function() {
+    $('#members-table').DataTable({
+      responsive: true,
+      order: [[ 0, "desc" ]],
+    });
+  } );
+
+  /**
+   * Attaches an form action from the clicked on row to the modal opened.
+   */
+  $('#confirmUnlinkModal').on('show.bs.modal', function(event) {
+    var row = $(event.relatedTarget) // get row that triggered modal
+    var action = row.data('action') // extract the action from row
+    $('#unlinkForm').attr('action', action) // attach action to form in modal
+  })
+</script>
+
+{% endblock %}

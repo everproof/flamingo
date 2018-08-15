@@ -1,0 +1,33 @@
+{% extends 'flamingo/base.html' %}
+
+{% block content %}
+{% include 'flamingo/organisations/org_nav.html' %}
+  <div class="tab-content" id="orgTabContent">
+    <div class="tab-pane fade show active">
+      <div class="card">
+        <div class="card-body">
+          Looking for users to link
+          <form id="add_member" action="{% url 'flamingo:org-users-list' organisation.id %}" method="GET" accept-charset="utf-8">
+            {% csrf_token %}
+                <input id="user_search" name="user_search" type="text" placeholder="Type a user name">
+                <button type="submit" class="btn btn-outline-primary" onclick="storeUser()">
+                Search for Everproof members
+              </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+<a id="back-button" class="btn btn-outline-primary"role="button" aria-disabled="true"> Return to search results </a>
+
+<script type="text/javascript">
+  /**
+   * Creates the href to go back to most recent searched list.
+   * Appends the href to the back button.
+   */
+  window.onload = function() {
+      document.getElementById("back-button").href = "{% url 'flamingo:org-list' %}" +  "?org=" + localStorage.getItem("orgSearchTerm");
+  };
+</script>
+
+{% endblock %}

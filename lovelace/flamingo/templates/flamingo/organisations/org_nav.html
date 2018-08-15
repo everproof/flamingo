@@ -1,0 +1,16 @@
+{% block content %}
+<ul class="nav nav-tabs" id="orgTab" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link {% if nbar == 'members' %}active{% endif %}" id="members-tab" href="{% url 'flamingo:org-members' organisation.id %}" >Members</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link {% if nbar == 'details' %}active{% endif %}" id="details-tab" href="{% url 'flamingo:org-details' organisation.id %}" >Details</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link {% if nbar == 'roles' %}active{% endif %}" id="roles-tab" href="{% url 'flamingo:org-roles' organisation.id %}">Roles</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link {% if nbar == 'requirements' %}active{% endif %}" id="requirements-tab" href="{% url 'flamingo:org-requirements' organisation.id %}">Requirements</a>
+  </li>
+</ul>
+{% endblock %}

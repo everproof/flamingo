@@ -1,0 +1,35 @@
+{% extends 'flamingo/base.html' %}
+
+{% block content %}
+  {% if providers %}
+    <h5>
+      {{ providers.count }} <u>providers</u> found  matching your query:
+    </h5>
+    <div class="table-responsive">
+      <table class="table table-hover table-striped" id="search-table">
+        <thead>
+          <tr>
+            <th>Providers</th>
+            <th>Curriculum Count</th>
+            <th> </th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for provider in providers %}
+            <tr>
+              <td>{{provider}}</td>
+              <td>{{provider.providers.count}} </td>
+              <td><a class="btn btn-outline-warning" href="{% url 'flamingo:providers-edit' provider.id %}" role="button" aria-disabled="true">Edit</a> </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p> No courses were found matching this search</p>
+  {% endif %}
+
+  <a class="btn btn-outline-primary" href="{% url 'flamingo:providers-search' %}" role="button" aria-disabled="true"> Back </a>
+  <a class="btn btn-outline-success" href="{% url 'flamingo:providers-add' %}" role="button" aria-disabled="true"> Add Provider </a>
+
+{% endblock %}

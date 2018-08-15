@@ -1,0 +1,74 @@
+{% extends 'flamingo/base.html' %}
+
+{% block content %}
+  {% if organisations %}
+    <h5>
+      {{ paginator.count }} organisations found:
+    </h5>
+    <div class="table-responsive">
+      <table class="table table-hover table-striped" id="search-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Members</th>
+            <th>Compliance Rate</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for organisation in organisations %}
+            <tr class="clickable-row" data-href="{% url 'flamingo:org-members' organisation.id %}">
+              <td> <b>{{ organisation.name }} </b>
+                {% if organisation.parents.count %}
+                  ({{ organisation.parents.all|join:"," }} )
+                {% endif %}
+
+              </td>
+              <td>{{ organisation.members.count }}</td>
+              <td>{{ organisation.get_compliance }}%</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% if is_paginated %}
+    <nav>
+      <ul class="pagination">
+        {% if page_obj.has_previous %}
+          <li class="page-item"> <a class="page-link" href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+        {% else %}
+          <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+        {% endif %}
+        {% for i in paginator.page_range %}
+          {% if page_obj.number == i %}
+            <li class="page-item active"><span class="page-link">{{ i }} <span class="sr-only">(current)</span></span></li>
+          {% else %}
+            <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+          {% endif %}
+        {% endfor %}
+        {% if page_obj.has_next %}
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+        {% else %}
+          <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+        {% endif %}
+      </ul>
+    </nav>
+    {% endif %}
+  {% else %}
+    <p> No organisations were found matching this search</p>
+  {% endif %}
+
+  <a class="btn btn-outline-primary" href="{% url 'flamingo:org-search' %}" role="button" aria-disabled="true"> Back </a>
+  <script>
+
+  /*
+   * Makes the rows in the table clickable.
+   */
+  jQuery(document).ready(function($) {
+      $(".clickable-row").click(function() {
+          window.location = $(this).data("href");
+      });
+  });
+  </script>
+
+{% endblock %}

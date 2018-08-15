@@ -1,0 +1,70 @@
+{% extends 'flamingo/base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+
+<h4>QUALIFICATIONS</h4>
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+  {% for key in tabs.keys %}
+    <li class="nav-item">
+      <a class="nav-link {% if key == 'All'%}active{% endif %}" id="{{key|cut:" "}}-tab" data-toggle="tab" href="#{{key|cut:" "}}" role="tab" aria-controls="{{key|cut:" "}}" aria-selected="false">
+        {{ key }}
+      </a>
+    </li>
+  {% endfor %}
+</ul>
+
+
+<div class="tab-content" id="myTabContent">
+  {% for key,values in tabs.items %}
+    <div class="tab-pane fade {% if key == 'All'%}show active{% endif %}" id="{{key|cut:" "}}" role="tabpanel" aria-labelledby="{{key|cut:" "}}-tab">
+      <div id="accordion-{{key|cut:" "}}">
+        {% for qualset in values %}
+          {% for qualification in qualset %}
+              <div class="card">
+                  <div class="card-header" id="heading{{qualification.id}}{{key|cut:" "}}">
+                    <button class="btn btn-link" data-toggle="collapse" data-target="#collapse{{qualification.id}}{{key|cut:" "}}" aria-expanded="false" aria-controls="collapse{{qualification.id}}{{key|cut:" "}}">
+                      {{ qualification.course.title }}
+                      {% if qualification.verification_status == 'VERIFIED' %}
+                        <span class="badge-pill badge-success">Verified</span>
+                      {% elif qualification.verification_status == 'EXPIRED' %}
+                        <span class="badge-pill badge-danger">Expired</span>
+                      {% elif qualification.verification_status == 'REVOKED' %}
+                        <span class="badge-pill badge-danger">Revoked</span>
+                      {% endif %}
+                    </button>
+                  </div>
+              <div id="collapse{{qualification.id}}{{key|cut:" "}}" class="collapse hide" aria-labelledby="heading{{qualification.id}}{{key|cut:" "}}" data-parent="#accordion-{{key|cut:" "}}">
+                  <div class="card-body">
+                    <p> Verification Status: <b> {{ qualification.verification_status }} </b> </p>
+                    <p> Date Attained: <b> {{ qualification.attained_date }} </b> </p>
+                    <p> Expiry Date:
+                      <b> {{ qualification.expiry_date }}</b>
+                      ({{ qualification.expiry_date|timeuntil:time }})
+                    </p>
+                    <p> Doc Number: <b> {{ qualification.document_number }} </b> </p>
+                    <p> Visbility: <b> {{ qualification.organisations.all|join:", " }}</b> </p>
+                    <p> Supporting Doc:
+                      {% if qualification.attached_files %}
+                      {{ qualification.attached_files }}
+                      {% endif %}
+                    </p>
+                    <p> Notes: <b> {{ qualification.notes }} </b> </p>
+                    <a class="btn btn-outline-warning" href="{% url 'flamingo:user-documents-edit' user.id qualification.id %}">Edit {{ qualification.course.title}}</a>
+                  </div>
+              </div>
+            </div>
+          {% empty %}
+            <b> {{user.first_name}} has no qualifications visible to {{ key }} </b>
+          {% endfor %}
+        {% endfor %}
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+
+<a class="btn btn-outline-primary" href="{% url 'flamingo:user-details' user.id %}">Back to {{ user.first_name }}'s details </a>
+
+
+{% endblock %}

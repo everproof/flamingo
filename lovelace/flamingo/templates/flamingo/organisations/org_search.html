@@ -1,0 +1,25 @@
+{% extends 'flamingo/base.html' %}
+
+{% block content %}
+  <div id="searchTerm" class="text-center">
+    <h2> Search for an organisation: </h2>
+    <form id="org_search" action="{% url 'flamingo:org-list' %}" method="get" accept-charset="utf-8">
+      <input id="searchBox" name="org" type="text" placeholder="Type an Organisation Name...">
+      <button class="btn btn-outline-primary" type="submit" onclick="store()">Search</button>
+    </form>
+  </div>
+
+
+  <script type="text/javascript">
+    /**
+     * Store the search term to local storage so that the user can be
+     * redirected back to the same search list after checking the details
+     * of an organisation.
+     */
+    function store(){
+      var orgSearchTerm = document.getElementById("searchBox");
+      localStorage.setItem("orgSearchTerm", orgSearchTerm.value);
+    }
+  </script>
+
+{% endblock %}

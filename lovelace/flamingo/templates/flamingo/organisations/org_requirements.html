@@ -1,0 +1,67 @@
+{% extends 'flamingo/base.html' %}
+
+{% block content %}
+{% include 'flamingo/organisations/org_nav.html' %}
+  <div class="tab-content" id="orgTabContent">
+    <div class="tab-pane fade show active">
+      <div class="card">
+        <div class="card-body">
+          <h6></h6>
+          {% if requirements %}
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">Requirement</th>
+                  <th scope="col">Documents</th>
+                  <th scope="col">Roles</th>
+                  <th scope="col"></th>
+                </tr>
+              </thead>
+              <tbody>
+              {% for requirement in requirements %}
+                <tr>
+                  <td>{{ requirement.name }}</td>
+                  <td>
+                    {% for course in requirement.courses.all %}
+                      {% if course|stringformat:"s" == requirement.name|stringformat:"s" %}
+                      <strong>{{ course }}</strong><br>
+                      {% endif %}
+                    {% endfor %}
+                    {% for course in requirement.courses.all %}
+                      {% if course|stringformat:"s" != requirement.name|stringformat:"s" %}
+                        <strong>or</strong> {{ course }}<br>
+                      {% endif %}
+                    {% endfor %}
+                  </td>
+                  <td>{{ requirement.roles.all|join:", " }}</td>
+                  <td>
+                    <div class="btn-group" role="group">
+                      <a class="btn btn-outline-primary" href="{% url 'flamingo:org-requirement' organisation.id requirement.id %}" role="button">View</a>
+                      <a class="btn btn-outline-warning" href="{% url 'flamingo:org-requirement-edit' organisation.id requirement.id %}" role="button">Edit</a>
+                    </div>
+                  </td>
+                </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          {% endif %}
+          <p>
+            <a class="btn btn-outline-info" href="{% url 'flamingo:org-requirement-add' organisation.id %}" role="button">Add New Requirement</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+<a id="back-button" class="btn btn-outline-primary"role="button" aria-disabled="true" href="#"> Return to search results </a>
+
+<script type="text/javascript">
+  /**
+   * Creates the href to go back to most recent searched list.
+   * Appends the href to the back button.
+   */
+  window.onload = function() {
+      document.getElementById("back-button").href = "{% url 'flamingo:org-list' %}" +  "?org=" + localStorage.getItem("orgSearchTerm");
+  };
+</script>
+
+{% endblock %}

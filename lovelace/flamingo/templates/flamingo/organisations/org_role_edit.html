@@ -1,0 +1,52 @@
+{% extends 'flamingo/base.html' %}
+
+{% block content %}
+{% include 'flamingo/organisations/org_nav.html' %}
+<div class="card">
+  <div class="card-body">
+    <form id="edit_role" action="{% url 'flamingo:org-role-edit' organisation.id role.id %}" method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+          <label><b>Role Name</b></label>
+          {{ role_form.name }}
+        </div>
+
+          <label><b>Role Requirements</b></label>
+          {{ req_form.requirements }}
+        <a class="btn btn-outline-danger" href="{% url 'flamingo:org-role' organisation.id role.id %}">
+          Cancel
+        </a>
+        <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#confirmEdit">
+          Save Changes
+        </button>
+    </form>
+  </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="confirmEdit" tabindex="-1" role="dialog" aria-labelledby="confirmEditLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmEditLabel">Confirm Edit</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to edit this role?
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline-danger" type="button" data-dismiss="modal">Close</button>
+        <button class="btn btn-outline-success" type="submit" form="edit_role" name="submit">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+$('#selectRequirements').multiSelect({
+  selectableHeader: "<div class='custom-header'>Existing Requirements</div>",
+  selectionHeader: "<div class='custom-header'>Selected Requirements for this role</div>",
+})
+</script>
+{% endblock %}

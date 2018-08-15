@@ -1,0 +1,64 @@
+{% extends 'flamingo/base.html' %}
+
+{% block content %}
+{% include 'flamingo/organisations/org_nav.html' %}
+  <div class="card">
+    <div class="card-body">
+      <p> <b> Role Name: </b> {{ role.name }} </p>
+      <p> <b> Role Requirements: </b> {{ role.role_requirements.all|join:", " }} </p>
+      <p> <b>  Members with this role: </b>
+        {% if role.members.count %}
+          <table class="table table-sm">
+            <thead>
+              <tr>
+              <th scope="col">First Name</th>
+              <th scope="col">Last Name</th>
+              <th scope="col">Email</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for member in role.members.all %}
+              <tr>
+                <td>{{ member.user.first_name }}</td>
+                <td>{{ member.user.last_name }}</td>
+                <td>{{ member.user.email }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% endif %}
+      </p>
+
+      <a class="btn btn-outline-primary" href="{% url 'flamingo:org-roles' organisation.id %}"> Back </a>
+      <a class="btn btn-outline-warning" href="{% url 'flamingo:org-role-edit' organisation.id role.id %}"> Edit Role</a>
+      <button type="button" id="unlink" class="btn btn-outline-danger" data-toggle="modal" data-target="#confirmDeleteModal" data-action="{% url 'flamingo:org-role-delete' organisation.id role.id %}">
+        Delete Role
+      </button>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmDeleteModalLabel">Confirm Role Delete</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to delete the role "{{ role.name }}"
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline-danger" type="button" data-dismiss="modal">Close</button>
+          <form id="deleteForm" method="POST" action="{% url 'flamingo:org-role-delete' organisation.id role.id %}">
+            {% csrf_token %}
+            <button id="confirmDeleteModalSubmit" class="btn btn-outline-success" type="submit" name="delete">Delete Role</a>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

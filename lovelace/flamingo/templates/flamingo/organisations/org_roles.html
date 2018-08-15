@@ -1,0 +1,46 @@
+{% extends 'flamingo/base.html' %}
+
+{% block content %}
+{% include 'flamingo/organisations/org_nav.html' %}
+<div class="card-body">
+{% if roles %}
+  <table class="table table-hover table-striped">
+    <thead>
+      <tr>
+        <th scope="col">Role</th>
+        <th scope="col">Requirements</th>
+        <th scope="col">Members</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for role in roles %}
+      <tr class="clickable-row" data-href="{% url 'flamingo:org-role' organisation.id role.id %}">
+        <td>{{ role.name }}</td>
+        <td>{{ role.role_requirements.all|join:", " }}</td>
+        <td>{{ role.members.count }}</td>
+        <td>
+          <div class="btn-group" role="group">
+            <a href="{% url 'flamingo:org-role' organisation.id role.id %}" class="btn btn-outline-primary" role="button">View</a>
+            <a href="{% url 'flamingo:org-role-edit' organisation.id role.id %}" class="btn btn-outline-warning" role="button">Edit</a>
+          </div>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% endif %}
+</div>
+
+<script>
+/*
+ * Makes the rows in the table clickable.
+ */
+jQuery(document).ready(function($) {
+    $(".clickable-row").click(function() {
+        window.location = $(this).data("href");
+    });
+});
+</script>
+<a href="{% url 'flamingo:org-role-add' organisation.id %}" class="btn btn-outline-info" role="button">Add New Role</a>
+{% endblock %}

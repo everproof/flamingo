@@ -1,0 +1,70 @@
+{% extends 'flamingo/base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+
+<h4>QUALIFICATIONS</h4>
+  <div id="accordion">
+    <div class="card">
+      <div class="card-header" id="heading{{qualification.id}}">
+        <button class="btn btn-link" data-toggle="collapse" data-target="#collapse{{qualification.id}}" aria-expanded="false" aria-controls="collapse{{qualification.id}}">
+            {{ qualification.course.title }}
+            {% if qualification.verification_status == 'VERIFIED' %}
+              <span class="badge-pill badge-success">Verified</span>
+            {% elif qualification.verification_status == 'EXPIRED' %}
+              <span class="badge-pill badge-danger">Expired</span>
+            {% elif qualification.verification_status == 'REVOKED' %}
+              <span class="badge-pill badge-danger">Revoked</span>
+            {% endif %}
+          </button>
+        </div>
+
+        <div id="collapse{{qualification.id}}" class="collapse show" aria-labelledby="heading{{qualification.id}}" data-parent="#accordion">
+          <div class="card-body">
+            <form id="editForm" method="POST" action="">
+              {% csrf_token %}
+                <p> Date Attained: {{ form.attained_date }}(YYYY-MM-DD) </p>
+                <p> Expiry Date: {{ form.expiry_date }}  </p>
+                <p> Doc Number: {{ form.document_number }} </p>
+                <p> Visbility: {{ form.organisations }} </p>
+                <p> Supporting Doc: {{ form.attached_files }} </p>
+                <p> Notes: {{ form.notes }} </p>
+
+                <input type="hidden" name="usr_pk" value="{{ qualification.user.id }}">
+                {% if form.errors %}
+                  <b> There were errors when we tried to submit the form :( </b>
+                  {{ form.errors }}
+                {% endif %}
+            </form>
+          </div>
+        </div>
+    </div>
+  </div>
+</form>
+<a class="btn btn-outline-danger" href="{% url 'flamingo:user-documents' qualification.user.id %}">Back</a>
+<button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#confirmEdit">
+  Update
+</button>
+
+
+<!-- Modal -->
+<div class="modal fade" id="confirmEdit" tabindex="-1" role="dialog" aria-labelledby="confirmEditLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmEditLabel">Confirm Edit</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to edit these fields?
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline-danger" type="button" data-dismiss="modal">Close</button>
+        <button class="btn btn-outline-success" type="submit" form="editForm" name="submit">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,100 @@
+{% extends 'flamingo/base.html' %}
+
+{% block content %}
+  <!-- Main Content -->
+  <h3> Looking for members to link to {{ organisation }} </h3>
+  {% if users %}
+    <h5>
+      {{ paginator.count }} results found:
+    </h5>
+    <div class="table-responsive">
+      <table class="table table-hover table-striped">
+        <thead>
+          <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th>Organisations</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in users %}
+            <tr>
+              <td>{{ user.first_name }}</td>
+              <td>{{ user.last_name }}</td>
+              <td>{{ user.email }}</td>
+              <td>
+                {% for membership in user.memberships.all %}
+                  <p>{{ membership.organisation }}</p>
+                {% endfor %}
+              </td>
+              <td> <a href="{% url 'flamingo:org-member-link' organisation.id user.id %}" class="btn btn-outline-success" role="button"> Link </a> </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p> No members were found matching this search</p>
+  {% endif %}
+
+  <!-- Pagination -->
+  {% if is_paginated %}
+  <nav>
+    <ul class="pagination">
+      {% if page_obj.has_previous %}
+        <li class="page-item"> <a class="page-link" href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+      {% endif %}
+      {% for i in paginator.page_range %}
+        {% if page_obj.number == i %}
+          <li class="page-item active"><span class="page-link">{{ i }} <span class="sr-only">(current)</span></span></li>
+        {% else %}
+          <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+        {% endif %}
+      {% endfor %}
+      {% if page_obj.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+      {% endif %}
+    </ul>
+  </nav>
+  {% endif %}
+  <a class="btn btn-outline-success" href="{% url 'flamingo:org-members-add' organisation.id %}" role="button" aria-disabled="true"> Didn't find the member? Add them to Everproof </a>
+  <a class="btn btn-outline-primary" href="{% url 'flamingo:org-users-search' organisation.id %}" role="button" aria-disabled="true"> Back </a>
+
+  <!-- Modal -->
+  <div class="modal fade" id="confirmLinkModal" tabindex="-1" role="dialog" aria-labelledby="confirmLinkModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmLinkModalLabel">Confirm Link User</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to link user?
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline-danger" type="button" data-dismiss="modal">Close</button>
+          <a id="confirmLinkModalSubmit" class="btn btn-outline-success" name="save">Save Changes</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  /*
+   * Makes the rows in the table clickable.
+   */
+  jQuery(document).ready(function($) {
+      $(".clickable-row").click(function() {
+          window.location = $(this).data("href");
+      });
+  });
+  </script>
+
+{% endblock %}

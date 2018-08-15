@@ -1,0 +1,47 @@
+{% extends 'flamingo/base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+
+<h2> PERSON DETAILS</h2>
+
+<form id="editForm" method="POST" action="">
+  {% csrf_token %}
+  <p> <b>First name: </b>{{ form.first_name }}
+  <p> <b>Middle name: </b>{{ form.last_name }} </p>
+  <p> <b>Last name:</b> {{ form.last_name }} </p>
+  <p> <b>Email:</b> {{ form.email }} </p>
+  <p> <b>DOB: </b>{{ form.date_of_birth }} (YYYY-MM-DD) </p>
+  <p> <b>Phone:</b> {{ form.phone }} </p>
+  <input type="hidden" name="usr_pk" value="{{ user.id }}">
+
+  <a class="btn btn-outline-danger" href="{% url 'flamingo:user-details' user.id %}">
+    Cancel
+  </a>
+  <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#confirmEdit">
+    Update
+  </button>
+</form>
+
+<!-- Modal -->
+<div class="modal fade" id="confirmEdit" tabindex="-1" role="dialog" aria-labelledby="confirmEditLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmEditLabel">Confirm Edit</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to edit these fields?
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline-danger" type="button" data-dismiss="modal">Close</button>
+        <button class="btn btn-outline-success" type="submit" form="editForm" name="submit">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
